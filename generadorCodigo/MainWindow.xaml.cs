@@ -36,17 +36,18 @@ namespace generadorCodigo
 
             using (DrawingContext dc = visual.RenderOpen())
             {
-                dc.DrawImage(bitmap, new Rect(0, 0, 600, 135)); // bitmap.PixelWidth, bitmap.PixelHeight));
+                dc.DrawImage(bitmap, new Rect(0, 0, 1550, 315)); //600, 135)); // bitmap.PixelWidth, bitmap.PixelHeight));
 
-                int pos = 37;
+                int pos = 0; //37;
                 int obpos = 1;
-                int tam = 22;
+                int tam = 31; //22;
+                int space = 6;
 
-                string tf = "Futura PT Heavy";
+                //string tf = "Futura PT"; // Heavy";
                 foreach (string word in text)
                 {
-                    var brush = Brushes.Gray;
-                    if (obpos == 1)
+                    var brush = new SolidColorBrush(Color.FromArgb(255, (byte)127, (byte)127, (byte)127)); //brush = Brushes.Gray;
+                    /*if (obpos == 1)
                     {
                         brush = new SolidColorBrush(Color.FromArgb(255, (byte)0, (byte)96, (byte)156));
                     }
@@ -54,7 +55,7 @@ namespace generadorCodigo
                     {
                         brush = new SolidColorBrush(Color.FromArgb(255, (byte)76, (byte)76, (byte)77));
                         tf = "Futura PT";
-                        tam = 12;
+                        //tam = 12;
                         pos = pos + 25;
                     }
                     if (obpos == 3)
@@ -65,13 +66,35 @@ namespace generadorCodigo
                     if (obpos > 3)
                     {
                         brush = new SolidColorBrush(Color.FromArgb(255, (byte)117, (byte)117, (byte)117));
-                        tam = 10;
+                        //tam = 10;
                         
                     }
 
                     if(obpos == 4)
                     {
                         pos = pos + 18;
+                    }
+                    */
+                    pos = pos + tam + space;
+                    var tf = "Futura PT";
+                    switch (obpos)
+                    {
+                        case 1:
+                            pos = pos - tam;
+                            tf = "Futura PT Heavy";
+                            brush = new SolidColorBrush(Color.FromArgb(255, (byte)36, (byte)176, (byte)227));
+                            break;
+                        case 2:
+                            tf = "Futura PT Heavy";
+                            brush = new SolidColorBrush(Color.FromArgb(255, (byte)36, (byte)176, (byte)227));
+                            break;
+                        case 4:
+                            if(word == "")
+                            pos = pos - tam - space;
+                            break;
+                        case 6:
+                            pos = pos + tam + space;
+                            break;
                     }
                    
                     FormattedText texto = new FormattedText(
@@ -81,34 +104,24 @@ namespace generadorCodigo
                     new Typeface(tf),
                     tam,
                     brush);
-                    Point p = new Point(300 - texto.Width / 2, pos);
+                    Point p = new Point(1, pos); //300 - texto.Width / 2, pos);
                     dc.DrawText(texto, p);
-                    
+                    /*
                     if(obpos > 3)
                     {
                         pos = pos + 10;
-                    }
+                    }*/
                     obpos = obpos + 1;
                 }
-                //dc.DrawText(text, position);
-                /*
-                FormattedText text = new FormattedText(
-                    "Hello",
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    new Typeface("Segeo UI"),
-                    20,
-                    Brushes.Red);
-                */
-                //Point p = new Point(300 - text.Width / 2, 44);
+                
             }
 
-            RenderTargetBitmap target = new RenderTargetBitmap(600, 135, 96, 96, PixelFormats.Default);
-                /*
-                 bitmap.PixelWidth, bitmap.PixelHeight,
-                                                               bitmap.DpiX, bitmap.DpiY, PixelFormats.Default);
-*/
-                target.Render(visual);
+            RenderTargetBitmap target = new RenderTargetBitmap(1550, 315, 96, 96, PixelFormats.Default);//600, 135, 96, 96, PixelFormats.Default);
+                            /*
+                                bitmap.PixelWidth, bitmap.PixelHeight,
+                                                                            bitmap.DpiX, bitmap.DpiY, PixelFormats.Default);
+            */
+            target.Render(visual);
 
             BitmapEncoder encoder = null;
 
@@ -136,21 +149,37 @@ namespace generadorCodigo
             var puestoa = "";
             var puestob = "";
             var largo = puesto.Length;
-            if( largo > 32)
+            if( largo > 42) //32)
             {
                 var half = largo / 2;
                 var espacio = puesto.LastIndexOf(" ", half);
                 puestoa = puesto.Substring(0, espacio);
                 puestob = puesto.Substring(espacio);
             }
-            
-
-            string[] text = new string[5] { tbnombre.Text.ToUpper(), puestoa.ToUpper(), puestob.ToUpper(), "+503 " +tbtel1.Text, "+503 " + tbtel2.Text };
-            if(tbtel2.Text == "" || tbtel2 == null)
+            else
             {
-                text = new string[4] { tbnombre.Text.ToUpper(), puestoa.ToUpper(), puestob.ToUpper(), "+503 " + tbtel1.Text};
+                puestoa = puesto;
             }
-            String inputFile = "C:\\drivers\\firma.png";
+            var company = "AIG";
+            var lcompany = "AIG Seguros, El Salvador, S.A.";
+            var address = "Calle Loma Linda, No. 265, Col. San Benito,";
+            var city = "San Salvador, El Salvador.";
+
+            var tel = "Tel 503-" + tbtel1.Text.Substring(0, 4) + "-" + tbtel1.Text.Substring(4, 4);
+            if (!(tbtel2.Text == "" || tbtel2 == null))
+            {
+                tel = tel + " | Cel 503-" + tbtel2.Text.Substring(0, 4) + "-" + tbtel2.Text.Substring(4, 4);
+            }
+            tel = tel + " | Fax 503-2250-3201";
+
+            string[] text = new string[8] { tbnombre.Text, company, puestoa, puestob, lcompany, address, city, tel };
+            //"+503 " +tbtel1.Text, "+503 " + tbtel2.Text };
+            /*if(tbtel2.Text == "" || tbtel2 == null)
+            {
+                text = new string[8] { tbnombre.Text.ToUpper(), company, puestoa.ToUpper(), puestob.ToUpper(), lcompany, address, city,
+                    "+503 " + tbtel1.Text};
+            }*/
+            String inputFile = "C:\\drivers\\firmaX.png";
 
             string output = "C:\\drivers\\" + text[0] + ".png";
             WriteTextToImage(inputFile, output, text);
@@ -183,7 +212,7 @@ namespace generadorCodigo
                 var puestoa = "";
                 var puestob = "";
                 var largo = puesto.Length;
-                if (largo > 32)
+                if (largo > 42)//32)
                 {
                     var half = largo / 2;
                     var espacio = puesto.LastIndexOf(" ", half);
@@ -194,7 +223,7 @@ namespace generadorCodigo
                 {
                     puestoa = puesto;
                 }
-
+                /*
                 var num2 = "";
                 if(usuario.Length > 3)
                 {
@@ -204,9 +233,23 @@ namespace generadorCodigo
                     }
                     
                 }
-                
-                string[] text = new string[5] { usuario[0].ToUpper(), puestoa.ToUpper(), puestob.ToUpper(), "+503 " + usuario[2], num2 };
-                String inputFile = "C:\\drivers\\firma.png";
+                */
+                var company = "AIG";
+                var lcompany = "AIG Seguros, El Salvador, S.A.";
+                var address = "Calle Loma Linda, No. 265, Col. San Benito,";
+                var city = "San Salvador, El Salvador.";
+
+                var tel = "Tel 503-" + usuario[2].Substring(0, 4) + "-" + usuario[2].Substring(4, 4);
+                if (!(usuario[3] == "" || usuario[3] == null))
+                {
+                    tel = tel + " | Cel 503-" + usuario[3].Substring(0, 4) + "-" + usuario[3].Substring(4, 4);
+                }
+                tel = tel + " | Fax 503-2250-3201";
+
+                string[] text = new string[8] { usuario[0], company, puestoa, puestob, lcompany, address, city, tel };
+              
+                //string[] text = new string[5] { usuario[0].ToUpper(), puestoa.ToUpper(), puestob.ToUpper(), "+503 " + usuario[2], num2 };
+                String inputFile = "C:\\drivers\\firmaX.png";
 
                 string output = "C:\\drivers\\" + text[0] + ".png";
                 WriteTextToImage(inputFile, output, text);
